@@ -28,6 +28,8 @@ public class User {
     String firstName;
     @JsonProperty
     List<String> cars;
+    @JsonProperty
+    List<Location> locations;
 
     public User() {
 

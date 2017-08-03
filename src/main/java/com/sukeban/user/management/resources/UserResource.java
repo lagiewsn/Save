@@ -1,13 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.sukeban.user.management.resources;
 
 import com.sukeban.user.management.api.DbQuery;
 import com.sukeban.user.management.api.User;
 import com.sukeban.user.management.api.UserStatus;
+import java.util.List;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -29,16 +26,25 @@ public class UserResource {
     }
 
     @GET
-    @Path("/{lastName}/{firstName}")
+    @Path("/get/{lastName}/{firstName}")
     @Produces(MediaType.APPLICATION_JSON)
     public User getUser(@PathParam("lastName") String lastName, @PathParam("firstName") String firstName) {
         return this.dbQuery.getUser(lastName, firstName);
     }
 
     @POST
-    @Path("/{lastName}/{firstName}")
+    @Path("/add-one-user")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public UserStatus addUser(@PathParam("lastName") String lastName, @PathParam("firstName") String firstName) {
-        return this.dbQuery.addUser(lastName, firstName);
+    public UserStatus addUser(User user) {
+        return this.dbQuery.addUser(user);
+    }
+
+    @POST
+    @Path("/add-multiple-user")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<UserStatus> addMultipleUser(List<User> users) {
+        return this.dbQuery.addMultipleUser(users);
     }
 }

@@ -6,6 +6,9 @@
 package com.sukeban.user.management.api;
 
 import com.mongodb.MongoClient;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
 import org.mongodb.morphia.query.Query;
@@ -48,29 +51,49 @@ public class DbQuery {
         return user;
     }
 
-    public UserStatus addUser(String lastName, String firstName) {
+    public UserStatus addUser(User user) {
 
-        User user = null;
         UserStatus userStatus = null;
         Query<User> query = null;
-        String status = "";
-        
+        String status = "Existing";
+
         query = this.datastore.createQuery(User.class).field("lastName")
-                .contains(lastName).field("firstName").contains(firstName);
+                .contains(user.getLastName()).field("firstName").contains(user.getFirstName());
 
         if (query.asList().isEmpty()) {
-            user = new User(lastName, firstName);
             this.datastore.save(user);
             mongoProducer.produceOneEvent(user.UserAsString());
             status = "Created";
 
-        } else {
-
-            user = query.asList().get(0);
-
-            status = "Existing";
         }
 
         return userStatus = new UserStatus(user, status);
+    }
+
+    public List<UserStatus> addMultipleUser(List<User> users) {
+        
+        UserStatus userStatus = null;
+        String status = "Existing";
+        Query<User> query = null;
+        ListIterator<User> it = users.listIterator();
+        List<UserStatus> listUserStatus = new ArrayList<>();
+
+        while (it.hasNext()) {
+
+            User user = it.next();
+            query = this.datastore.createQuery(User.class).field("lastName")
+                    .contains(user.getLastName()).field("firstName").contains(user.getFirstName());
+
+            if (query.asList().isEmpty()) {
+                this.datastore.save(user);
+                mongoProducer.produceOneEvent(user.UserAsString());
+                status = "Created";
+            }
+            
+            listUserStatus.add(new UserStatus(user, status));
+            
+        }
+        
+        return listUserStatus;
     }
 }
