@@ -48,17 +48,17 @@ public class MongodbConsumer extends Thread {
     @Override
     public void run() {
 
-        UpdateOperations<User> ops = null;
-        Query<User> query = null;
-        ObjectMapper mapper = new ObjectMapper();
         DbQuery dbQuery = new DbQuery();
+        UpdateOperations<User> ops = dbQuery.getDatastore().createUpdateOperations(User.class);
+        Query<User> query = dbQuery.getDatastore().createQuery(User.class);
+        ObjectMapper mapper = new ObjectMapper();
 
         Properties configProperties = new Properties();
         configProperties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         configProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
         configProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
         configProperties.put(ConsumerConfig.GROUP_ID_CONFIG, groupName);
-        configProperties.put(ConsumerConfig.CLIENT_ID_CONFIG, "simple");
+        configProperties.put(ConsumerConfig.CLIENT_ID_CONFIG, "user-management");
 
         //Figure out where to start processing messages from
         kafkaConsumer = new KafkaConsumer<>(configProperties);
@@ -70,14 +70,13 @@ public class MongodbConsumer extends Thread {
                 for (ConsumerRecord<String, String> record : records) {
 
                     User user = mapper.readValue(record.value(), User.class);
+                    if (user.getCars() != null) {
+                        query = query.field("lastName").contains(user.getLastName())
+                                .field("firstName").contains(user.getFirstName());
+                        ops = ops.addToSet("cars", user.getCars());
 
-                    query = dbQuery.getDatastore().createQuery(User.class)
-                            .field("lastName").contains(user.getLastName())
-                            .field("firstName").contains(user.getFirstName());
-                    ops = dbQuery.getDatastore().createUpdateOperations(User.class)
-                            .addToSet("cars", user.getCars());
-
-                    dbQuery.getDatastore().update(query, ops);
+                        dbQuery.getDatastore().update(query, ops);
+                    }
 
                 }
             }
