@@ -6,12 +6,16 @@
 package com.sukeban.user.management.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
+import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
 
+@JsonInclude(Include.NON_NULL)
 @Entity(value = "USER", noClassnameStored = true)
 public class User {
 
@@ -24,7 +28,6 @@ public class User {
     String firstName;
     @JsonProperty
     List<String> cars;
-
 
     public User() {
 
@@ -62,6 +65,16 @@ public class User {
 
     public void setCars(List<String> cars) {
         this.cars = cars;
+    }
+    
+        public String UserAsString() {
+        Document userDocument = new Document()
+                .append("lastName", lastName)
+                .append("firstName", firstName)
+                .append("cars",cars);
+        
+        return userDocument.toJson();
+                
     }
 
 }

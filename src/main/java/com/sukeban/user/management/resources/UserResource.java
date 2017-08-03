@@ -20,27 +20,25 @@ import org.mongodb.morphia.Datastore;
 @Produces(MediaType.APPLICATION_JSON)
 public class UserResource {
 
-
-    Datastore datastore;
-    
-    DbQuery dbQuery = new DbQuery();
+    DbQuery dbQuery;
 
     public UserResource(Datastore datastore) {
 
-        this.datastore = datastore;
+        this.dbQuery = new DbQuery(datastore);
+
     }
 
     @GET
     @Path("/{lastName}/{firstName}")
     @Produces(MediaType.APPLICATION_JSON)
     public User getUser(@PathParam("lastName") String lastName, @PathParam("firstName") String firstName) {
-       return dbQuery.getUser(lastName, firstName, datastore);
+        return this.dbQuery.getUser(lastName, firstName);
     }
 
     @POST
     @Path("/{lastName}/{firstName}")
     @Produces(MediaType.APPLICATION_JSON)
     public UserStatus addUser(@PathParam("lastName") String lastName, @PathParam("firstName") String firstName) {
-        return dbQuery.addUser(lastName, firstName, datastore);
+        return this.dbQuery.addUser(lastName, firstName);
     }
 }

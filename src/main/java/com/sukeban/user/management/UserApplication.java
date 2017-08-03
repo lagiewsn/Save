@@ -18,7 +18,7 @@ import org.mongodb.morphia.Morphia;
 public class UserApplication extends Application<UserConfiguration> {
 
     private static final String GROUP_ID = "group1";
-    private static final String CONSUMER_TOPIC = "UPDATE-USER";
+    private static final String CONSUMER_TOPIC = "UPDATE-USER-MANAGEMENT-DB";
 
     private static final String DB_NAME = "USER-MANAGEMENT-DB";
     private Morphia morphia;

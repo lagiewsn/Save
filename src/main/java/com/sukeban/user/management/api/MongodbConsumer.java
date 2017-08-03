@@ -75,10 +75,9 @@ public class MongodbConsumer extends Thread {
                             .field("lastName").contains(user.getLastName())
                             .field("firstName").contains(user.getFirstName());
                     ops = dbQuery.getDatastore().createUpdateOperations(User.class)
-                            .add("cars", user.getCars());
+                            .addToSet("cars", user.getCars());
 
                     dbQuery.getDatastore().update(query, ops);
-                    System.out.println("ok");
 
                 }
             }
