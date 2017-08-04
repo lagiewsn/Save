@@ -2,7 +2,7 @@ package com.sukeban.user.management.resources;
 
 import com.sukeban.user.management.api.DbQuery;
 import com.sukeban.user.management.api.User;
-import com.sukeban.user.management.api.UserStatus;
+import com.sukeban.user.management.api.Status;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -36,7 +36,7 @@ public class UserResource {
     @Path("/add-one-user")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public UserStatus addUser(User user) {
+    public Status addUser(User user) {
         return this.dbQuery.addUser(user);
     }
 
@@ -44,7 +44,7 @@ public class UserResource {
     @Path("/add-multiple-user")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public List<UserStatus> addMultipleUser(List<User> users) {
+    public List<Status> addMultipleUser(List<User> users) {
         return this.dbQuery.addMultipleUser(users);
     }
 }

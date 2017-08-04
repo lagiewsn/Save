@@ -7,17 +7,17 @@ package com.sukeban.user.management.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class UserStatus {
+public class Status {
 
     @JsonProperty
     private User user;
     @JsonProperty
     private String status;
 
-    public UserStatus() {
+    public Status() {
     }
     
-    UserStatus(User user, String status) {
+    Status(User user, String status) {
         this.user = user;
         this.status = status;
     }

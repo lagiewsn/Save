@@ -49,8 +49,6 @@ public class MongodbConsumer extends Thread {
     public void run() {
 
         DbQuery dbQuery = new DbQuery();
-        UpdateOperations<User> ops = dbQuery.getDatastore().createUpdateOperations(User.class);
-        Query<User> query = dbQuery.getDatastore().createQuery(User.class);
         ObjectMapper mapper = new ObjectMapper();
 
         Properties configProperties = new Properties();
@@ -71,9 +69,9 @@ public class MongodbConsumer extends Thread {
 
                     User user = mapper.readValue(record.value(), User.class);
                     if (user.getCars() != null) {
-                        query = query.field("lastName").contains(user.getLastName())
+                        Query<User> query = dbQuery.getDatastore().createQuery(User.class).field("lastName").contains(user.getLastName())
                                 .field("firstName").contains(user.getFirstName());
-                        ops = ops.addToSet("cars", user.getCars());
+                        UpdateOperations<User> ops = dbQuery.getDatastore().createUpdateOperations(User.class).addToSet("cars", user.getCars());
 
                         dbQuery.getDatastore().update(query, ops);
                     }

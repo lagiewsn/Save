@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.sukeban.user.management.api;
 
 import com.mongodb.MongoClient;
@@ -52,7 +47,7 @@ public class DbQuery {
         return user;
     }
 
-    public UserStatus addUser(User user) {
+    public Status addUser(User user) {
 
         String status = "Existing";
         Query<User> query = this.datastore.createQuery(User.class)
@@ -66,20 +61,20 @@ public class DbQuery {
 
         }
 
-        return new UserStatus(user, status);
+        return new Status(user, status);
     }
 
-    public List<UserStatus> addMultipleUser(List<User> users) {
+    public List<Status> addMultipleUser(List<User> users) {
 
         String status = "Existing";
-        Query<User> query = this.datastore.createQuery(User.class);
+
         ListIterator<User> it = users.listIterator();
-        List<UserStatus> listUserStatus = new ArrayList<>();
+        List<Status> listUserStatus = new ArrayList<>();
 
         while (it.hasNext()) {
 
             User user = it.next();
-            query = query.field("lastName").contains(user.getLastName())
+            Query<User> query = this.datastore.createQuery(User.class).field("lastName").contains(user.getLastName())
                     .field("firstName").contains(user.getFirstName());
 
             if (query.asList().isEmpty()) {
@@ -88,7 +83,7 @@ public class DbQuery {
                 status = "Created";
             }
 
-            listUserStatus.add(new UserStatus(user, status));
+            listUserStatus.add(new Status(user, status));
 
         }
 
