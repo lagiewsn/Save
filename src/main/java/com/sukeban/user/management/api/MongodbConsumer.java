@@ -16,16 +16,25 @@ import org.mongodb.morphia.query.UpdateOperations;
 
 public class MongodbConsumer extends Thread {
 
+    private String dbName;
     private String topicName;
     private String groupName;
     private KafkaConsumer<String, String> kafkaConsumer;
+    private String topicproducer;
 
     public MongodbConsumer() {
     }
 
-    public MongodbConsumer(String topicName, String groupName) {
+    public MongodbConsumer(String dbName,
+            String topicName,
+            String groupName,
+            String topicProducer
+    ) {
+
+        this.dbName = dbName;
         this.topicName = topicName;
         this.groupName = groupName;
+        this.topicproducer = topicProducer;
 
     }
 
@@ -45,18 +54,38 @@ public class MongodbConsumer extends Thread {
         this.groupName = groupName;
     }
 
+    public String getTopicproducer() {
+        return topicproducer;
+    }
+
+    public void setTopicproducer(String topicproducer) {
+        this.topicproducer = topicproducer;
+    }
+
     @Override
     public void run() {
 
-        DbQuery dbQuery = new DbQuery();
+        DbQuery dbQuery = new DbQuery(this.dbName, this.topicproducer);
         ObjectMapper mapper = new ObjectMapper();
 
         Properties configProperties = new Properties();
-        configProperties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-        configProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
-        configProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
-        configProperties.put(ConsumerConfig.GROUP_ID_CONFIG, groupName);
-        configProperties.put(ConsumerConfig.CLIENT_ID_CONFIG, "user-management");
+
+        configProperties.
+                put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+
+        configProperties.
+                put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
+                        "org.apache.kafka.common.serialization.StringDeserializer");
+
+        configProperties.
+                put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
+                        "org.apache.kafka.common.serialization.StringDeserializer");
+
+        configProperties.
+                put(ConsumerConfig.GROUP_ID_CONFIG, groupName);
+
+        configProperties.
+                put(ConsumerConfig.CLIENT_ID_CONFIG, "user-management");
 
         //Figure out where to start processing messages from
         kafkaConsumer = new KafkaConsumer<>(configProperties);

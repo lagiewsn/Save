@@ -11,11 +11,10 @@ import org.mongodb.morphia.query.Query;
 public class DbQuery {
 
     Datastore datastore;
-    private static final String DB_NAME = "USER-MANAGEMENT-DB";
     private final MongodbProducer mongoProducer;
-    private static final String TOPIC_PRODUCER = "UPDATE-CAR-MANAGEMENT-DB";
+    
 
-    public DbQuery() {
+    public DbQuery(String DB_NAME, String TOPIC_PRODUCER) {
         Morphia morphia = new Morphia();
         MongoClient mongoClient = new MongoClient();
 
@@ -25,7 +24,7 @@ public class DbQuery {
         this.mongoProducer = new MongodbProducer(TOPIC_PRODUCER);
     }
 
-    public DbQuery(Datastore datastore) {
+    public DbQuery(Datastore datastore, String TOPIC_PRODUCER) {
         this.datastore = datastore;
         this.mongoProducer = new MongodbProducer(TOPIC_PRODUCER);
     }

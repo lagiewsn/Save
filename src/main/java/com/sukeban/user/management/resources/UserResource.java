@@ -1,8 +1,8 @@
 package com.sukeban.user.management.resources;
 
 import com.sukeban.user.management.api.DbQuery;
-import com.sukeban.user.management.api.User;
 import com.sukeban.user.management.api.Status;
+import com.sukeban.user.management.api.User;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -19,9 +19,9 @@ public class UserResource {
 
     DbQuery dbQuery;
 
-    public UserResource(Datastore datastore) {
+    public UserResource(Datastore datastore, String TOPIC_PRODUCER) {
 
-        this.dbQuery = new DbQuery(datastore);
+        this.dbQuery = new DbQuery(datastore, TOPIC_PRODUCER);
 
     }
 

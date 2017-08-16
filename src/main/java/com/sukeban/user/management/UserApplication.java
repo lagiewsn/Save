@@ -14,6 +14,7 @@ public class UserApplication extends Application<UserConfiguration> {
 
     private static final String GROUP_ID = "group1";
     private static final String CONSUMER_TOPIC = "UPDATE-USER-MANAGEMENT-DB";
+    private static final String TOPIC_PRODUCER = "UPDATE-CAR-MANAGEMENT-DB";
 
     private static final String DB_NAME = "USER-MANAGEMENT-DB";
     private Morphia morphia;
@@ -22,7 +23,7 @@ public class UserApplication extends Application<UserConfiguration> {
     public static void main(String[] args) throws Exception {
        
         new UserApplication().run(args);
-        new MongodbConsumer(CONSUMER_TOPIC, GROUP_ID).start();
+        new MongodbConsumer(DB_NAME, CONSUMER_TOPIC, GROUP_ID, TOPIC_PRODUCER).start();
     }
 
     @Override
@@ -43,7 +44,7 @@ public class UserApplication extends Application<UserConfiguration> {
 
         environment.healthChecks().register("User", new UserHealthCheck(mongoClient));
 
-        final UserResource resource = new UserResource(datastore);
+        final UserResource resource = new UserResource(datastore, TOPIC_PRODUCER);
         environment.jersey().register(resource);
 
     }
